@@ -39,7 +39,7 @@ var calculateBarHeight = function (maxHeight, maxValue, value) {
   return maxHeight * value / maxValue;
 };
 
-var renderStatistics = function (ctx, names, times) {
+window.renderStatistics = function (ctx, names, times) {
   // Отрисовка облака с тенью
   createCloud(ctx, CLOUD_X + SHADE_GAP, CLOUD_Y + SHADE_GAP, 'rgba(0, 0, 0, 0.7)');
   createCloud(ctx, CLOUD_X, CLOUD_Y, '#fff');
