@@ -1,4 +1,7 @@
 'use strict';
+
+var CLOUD_COLOR = '#fff';
+var SHADE_COLOR = 'rgba(0, 0, 0, 0.7)';
 var CLOUD_X = 100;
 var CLOUD_Y = 10;
 var CLOUD_WIDTH = 420;
@@ -10,8 +13,16 @@ var BAR_GAP = 50;
 var BAR_WIDTH = 40;
 var BAR_MAX = 150;
 var TEXT__HEIGHT = 20;
+var TEXT_COLOR = '#000';
+var FONT = '16px PT Mono';
+var GRAPH_GAP = 90;
+var CURRENT_PLAYER_NAME = 'Вы';
+var CURRENT_PLAYER_COLOR = 'rgba(255, 0, 0, 1)';
 var curveWidth = CLOUD_WIDTH / 3;
+var curveStepX = curveWidth / 3;
 var curveHeight = CLOUD_HEIGHT / 13.5;
+var curveStepY = curveHeight / 3;
+var textGap = TEXT__HEIGHT / 2;
 
 var createCloud = function (ctx, x, y, color) {
   ctx.beginPath();
@@ -19,9 +30,9 @@ var createCloud = function (ctx, x, y, color) {
   var startX = x;
   var startY = y + CLOUD_CURVE_GAP;
   for (var i = 0; i < 3; i++) {
-    ctx.bezierCurveTo(startX + curveWidth / 3, startY - curveHeight, startX + curveWidth / 1.5, startY - curveHeight / 3, startX + curveWidth, startY + curveHeight / 3);
+    ctx.bezierCurveTo(startX + curveStepX, startY - curveHeight, startX + curveStepX * 2, startY - curveStepY, startX + curveWidth, startY + curveStepY);
     startX += curveWidth;
-    startY += curveHeight / 3;
+    startY += curveStepY;
   }
   ctx.lineTo(x + CLOUD_WIDTH, y + CLOUD_HEIGHT);
   ctx.lineTo(x, y + CLOUD_HEIGHT);
@@ -30,54 +41,31 @@ var createCloud = function (ctx, x, y, color) {
   ctx.fill();
 };
 
-var splitString = function (string) {
-  var stringsArray = [];
-  var firstIndex = 0;
-  var lastIndex = 0;
-  var i = 0;
-  while (lastIndex < string.length) {
-    lastIndex = string.indexOf('/n', firstIndex);
-    if (lastIndex === -1) {
-      lastIndex = string.length;
-    }
-    stringsArray[i] = string.substring(firstIndex, lastIndex);
-    i++;
-    firstIndex = lastIndex + 2;
-  }
-  return stringsArray;
-};
-
-var showMessages = function (ctx, message, x, y, lineHeight) {
-  var messageStrings = splitString(message);
-  ctx.fillStyle = '#000';
-  ctx.font = '16px PT Mono';
+var showMessages = function (ctx, message) {
+  var messageStrings = message.split('/n');
+  ctx.fillStyle = TEXT_COLOR;
+  ctx.font = FONT;
   for (var i = 0; i < messageStrings.length; i++) {
-    ctx.fillText(messageStrings[i], x, y + lineHeight * (i + 1));
+    ctx.fillText(messageStrings[i], CLOUD_X + CLOUD_GAP, CLOUD_Y + CLOUD_GAP + TEXT__HEIGHT * (i + 1));
   }
 };
 
-var getColor = function (name) {
-  var randomNumber;
-  var color;
-  if (name === 'Вы') {
-    color = 'rgba(255, 0, 0, 1)';
-  } else {
-    randomNumber = Math.round(Math.random() * 100);
-    color = 'hsl(240, ' + randomNumber + '%, 50%)';
-  }
+var getRandomColor = function () {
+  var randomNumber = Math.round(Math.random() * 100);
+  var color = 'hsl(240, ' + randomNumber + '%, 50%)';
   return color;
 };
 
-var calculateBarHeight = function (maxHeight, maxValue, value) {
-  return maxHeight * value / maxValue;
+var calculateBarHeight = function (maxValue, value) {
+  return BAR_MAX * value / maxValue;
 };
 
-var createBar = function (ctx, color, x, y, width, height) {
+var createBar = function (ctx, color, x, y, height) {
   ctx.fillStyle = color;
-  ctx.fillRect(x, y, width, height);
+  ctx.fillRect(x, y, BAR_WIDTH, height);
 };
 
-var renderBarGraph = function (ctx, graphX, graphY, graphHeight, barWidth, barGap, textGap, names, times) {
+var renderBarGraph = function (ctx, names, times) {
   // Сравнение длин массивов и выбор кратчайшего
   var arrayLength = names.length;
   if (arrayLength > times.length) {
@@ -89,42 +77,48 @@ var renderBarGraph = function (ctx, graphX, graphY, graphHeight, barWidth, barGa
   // Построение гистограммы
   var playerTime;
   var barHeight = 0;
-  var barX = graphX;
-  var barY = graphY + graphHeight;
+  var barX = CLOUD_X + BAR_GAP;
+  var barY = CLOUD_Y + GRAPH_GAP;
+  var barColor;
 
   for (var i = 0; i < arrayLength; i++) {
     // Вывод имени игрока
-    ctx.fillStyle = '#000';
-    ctx.fillText(names[i], barX, graphY + graphHeight + textGap);
+    ctx.fillStyle = TEXT_COLOR;
+    ctx.fillText(names[i], barX, CLOUD_Y + GRAPH_GAP + BAR_MAX + TEXT__HEIGHT);
 
     // Определение цвета столбца
-    var playerColor = getColor(names[i]);
+    if (names[i] === CURRENT_PLAYER_NAME) {
+      barColor = CURRENT_PLAYER_COLOR;
+    } else {
+      barColor = getRandomColor();
+    }
 
     // Расчет высоты и положения столбца
-    barHeight = calculateBarHeight(graphHeight, maxTime, times[i]);
-    barY = graphY + graphHeight - barHeight;
+    barX = CLOUD_X + BAR_GAP + (BAR_WIDTH + BAR_GAP) * i;
+    barHeight = calculateBarHeight(maxTime, times[i]);
+    barY = CLOUD_Y + GRAPH_GAP + BAR_MAX - barHeight;
 
     // Отрисовка столбца
-    createBar(ctx, playerColor, barX, barY, barWidth, barHeight);
+    createBar(ctx, barColor, barX, barY, barHeight);
 
     // Вывод времени  игрока
     playerTime = Math.round(times[i]) + '';
-    ctx.fillStyle = '#000';
-    ctx.fillText(playerTime, barX, barY - textGap / 2);
+    ctx.fillStyle = TEXT_COLOR;
+    ctx.fillText(playerTime, barX, barY - textGap);
 
     // Подготовка к следующей итерации
-    barX += (barWidth + barGap);
+    barX += (BAR_WIDTH + BAR_GAP);
   }
 };
 
 window.renderStatistics = function (ctx, names, times) {
   // Отрисовка облака с тенью
-  createCloud(ctx, CLOUD_X + SHADE_GAP, CLOUD_Y + SHADE_GAP, 'rgba(0, 0, 0, 0.7)');
-  createCloud(ctx, CLOUD_X, CLOUD_Y, '#fff');
+  createCloud(ctx, CLOUD_X + SHADE_GAP, CLOUD_Y + SHADE_GAP, SHADE_COLOR);
+  createCloud(ctx, CLOUD_X, CLOUD_Y, CLOUD_COLOR);
 
   // Вывод сообщения о победе
-  showMessages(ctx, 'Ура вы победили!/nСписок результатов:', CLOUD_X + CLOUD_GAP, CLOUD_Y + CLOUD_GAP, TEXT__HEIGHT);
+  showMessages(ctx, 'Ура вы победили!/nСписок результатов:');
 
   // Построение гистограммы
-  renderBarGraph(ctx, CLOUD_X + BAR_GAP, CLOUD_Y + TEXT__HEIGHT * 4.5, BAR_MAX, BAR_WIDTH, BAR_GAP, TEXT__HEIGHT, names, times);
+  renderBarGraph(ctx, names, times);
 };
