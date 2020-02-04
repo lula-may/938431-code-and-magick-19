@@ -131,7 +131,7 @@ var getNextColor = function (currentColor, colors) {
 };
 
 var changeColor = function (element, elementInput, type) {
-  var currentColor = element.style.fill;
+  var currentColor = elementInput.value;
   var nextColor = getNextColor(currentColor, color[type]);
   element.style.fill = nextColor;
   elementInput.value = nextColor;
