@@ -6,10 +6,6 @@
   var ESC_KEY = 'Escape';
 
   var userSetupElement = document.querySelector('.setup');
-  var similarListElement = userSetupElement.querySelector('.setup-similar-list');
-
-  similarListElement.appendChild(window.wizards.fragment);
-  userSetupElement.querySelector('.setup-similar').classList.remove('hidden');
 
   // Реакция на ошибку ввода имени волшебника
   var userNameInput = userSetupElement.querySelector('.setup-user-name');
