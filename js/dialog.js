@@ -8,10 +8,21 @@
   var userSetupCloseButton = userSetupElement.querySelector('.setup-close');
   var userSetupKnob = userSetupElement.querySelector('.upload');
 
+  var showErrorMessage = function (message) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 10; width: 30%; margin: 0 auto; padding: 30px; text-align: center; background-color: white; color: black; border: 3px solid red;';
+    node.style.position = 'absolute';
+    node.style.top = '150px';
+    node.style.left = '30%';
+    node.style.fontSize = '24px';
+    node.textContent = message;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
   // Открытие диалогового окна
   var openPopup = function () {
     userSetupElement.classList.remove('hidden');
-    window.wizards.get();
+    window.backend.load(window.wizards.get, showErrorMessage);
     document.addEventListener('keydown', escPressHandler);
     userSetupOpenButton.removeEventListener('click', userSetupOpenButtonClickHandler);
     userSetupOpenButton.removeEventListener('keydown', userSetupOpenButtonPressEnterHandler);
