@@ -110,4 +110,9 @@
   });
 
   userSetupKnob.addEventListener('mousedown', userSetupKnobDragHandler);
+
+  window.dialog = {
+    close: closePopup,
+    showError: showErrorMessage
+  };
 })();
