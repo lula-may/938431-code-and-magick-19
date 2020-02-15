@@ -45,7 +45,7 @@
   };
 
   var upload = function (data, onSuccess, onError) {
-    var URL = 'https://js.dump.academy/code-and-magic';
+    var URL = 'https://js.dump.academy/code-and-magick';
 
     var loadHandler = function () {
       switch (xhr.status) {
