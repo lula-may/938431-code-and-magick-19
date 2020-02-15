@@ -6,6 +6,7 @@
   var ESC_KEY = 'Escape';
 
   var userSetupElement = document.querySelector('.setup');
+  var userSetupForm = userSetupElement.querySelector('.setup-wizard-form');
 
   // Реакция на ошибку ввода имени волшебника
   var userNameInput = userSetupElement.querySelector('.setup-user-name');
@@ -73,8 +74,23 @@
     changeBackgroundColor(wizardFireball, wizardFireballInput, fireballColorIndex, FIREBALL_COLORS);
   };
 
+  // Обработчик отправки формы
+  var formSubmitHandler = function (evt) {
+    var submitButton = userSetupForm.querySelector('.setup-submit');
+    var onSuccess = function () {
+      window.dialog.close();
+      submitButton.textContent = 'Сохранить';
+      submitButton.disabled = false;
+    };
+    submitButton.textContent = 'Данные отправляются...';
+    submitButton.disabled = true;
+    evt.preventDefault();
+    window.backend.save(new FormData(userSetupForm), onSuccess, window.dialog.showError);
+  };
+
   // Вешаем обработчики на элементы
   wizardCoat.addEventListener('click', wizardCoatClickHandler);
   wizardEyes.addEventListener('click', wizardEyesClickHandler);
   wizardFireball.addEventListener('click', wizardFireballClickHandler);
+  userSetupForm.addEventListener('submit', formSubmitHandler);
 })();
