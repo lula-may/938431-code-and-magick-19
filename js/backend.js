@@ -29,7 +29,7 @@
         onError('Ошибка загрузки данных. Сервер не найден.');
         break;
       default:
-        onError('Ошибка загрузки данных с сервера. Статус ответа: ' + request.status + ' ' + request.statusText);
+        onError('Ошибка загрузки данных. Статус ответа: ' + request.status + ' ' + request.statusText);
     }
   };
 
