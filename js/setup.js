@@ -76,18 +76,21 @@
 
   // Создание сообщения об ошибке
   var showErrorMessage = function (message) {
+    var styles = [
+      'position: absolute',
+      'top: 150px',
+      'left: 30%',
+      'z-index: 10',
+      'width: 30%',
+      'padding: 30px',
+      'font-size: 24px',
+      'color: black',
+      'text-align: center',
+      'background-color: white',
+      'border: 3px solid red'
+    ];
     var node = document.createElement('div');
-    node.style.position = 'absolute';
-    node.style.zIndex = '10';
-    node.style.width = '30%';
-    node.style.padding = '30px';
-    node.style.top = '150px';
-    node.style.left = '30%';
-    node.style.fontSize = '24px';
-    node.style.color = 'black';
-    node.style.textAlign = 'center';
-    node.style.backgroundColor = 'white';
-    node.style.border = '3px solid red';
+    node.style.cssText = styles.join('; ');
     node.textContent = message;
     document.body.insertAdjacentElement('afterbegin', node);
   };
