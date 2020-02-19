@@ -1,15 +1,22 @@
 'use strict';
 
 (function () {
+  var WIZARD_AMOUNT = 4;
   var similarElement = document.querySelector('.setup-similar');
   var similarList = similarElement.querySelector('.setup-similar-list');
+  var wizardList = [];
 
-  var getWizardsFragment = function () {
-    var WIZARD_NAMES = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
-    var WIZARD_SURNAMES = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
-    var COAT_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
-    var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
-    var WIZARD_QUANTITY = 4;
+  var getWizardsFragment = function (serverData) {
+    // Адаптируем данные с сервера
+    wizardList = serverData.map(function (el) {
+      return {
+        name: el.name,
+        coatColor: el.colorCoat,
+        eyesColor: el.colorEyes,
+        fireballColor: el.colorFireball,
+        artifacts: el.artifacts
+      };
+    });
 
     var similarWizardTemplate = document.querySelector('#similar-wizard-template')
     .content
@@ -20,18 +27,6 @@
       return arr[randomIndex];
     };
 
-    var createWizardList = function () {
-      var results = [];
-      for (var i = 0; i < WIZARD_QUANTITY; i++) {
-        var newElement = {};
-        newElement.name = getRandomElement(WIZARD_NAMES) + ' ' + getRandomElement(WIZARD_SURNAMES);
-        newElement.coatColor = getRandomElement(COAT_COLORS);
-        newElement.eyesColor = getRandomElement(EYES_COLORS);
-        results.push(newElement);
-      }
-      return results;
-    };
-
     var renderWizard = function (wizard) {
       var wizardElement = similarWizardTemplate.cloneNode(true);
       wizardElement.querySelector('.setup-similar-label').textContent = wizard.name;
@@ -40,10 +35,10 @@
       return wizardElement;
     };
 
-    var wizards = createWizardList();
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < wizards.length; i++) {
-      fragment.appendChild(renderWizard(wizards[i]));
+    for (var i = 0; i < WIZARD_AMOUNT; i++) {
+      var nextRandomWizard = getRandomElement(wizardList);
+      fragment.appendChild(renderWizard(nextRandomWizard));
     }
 
     similarList.appendChild(fragment);

@@ -6,6 +6,7 @@
   var ESC_KEY = 'Escape';
 
   var userSetupElement = document.querySelector('.setup');
+  var userSetupForm = userSetupElement.querySelector('.setup-wizard-form');
 
   // Реакция на ошибку ввода имени волшебника
   var userNameInput = userSetupElement.querySelector('.setup-user-name');
@@ -73,8 +74,47 @@
     changeBackgroundColor(wizardFireball, wizardFireballInput, fireballColorIndex, FIREBALL_COLORS);
   };
 
+  // Создание сообщения об ошибке
+  var showErrorMessage = function (message) {
+    var styles = [
+      'position: absolute',
+      'top: 150px',
+      'left: 30%',
+      'z-index: 10',
+      'width: 30%',
+      'padding: 30px',
+      'font-size: 24px',
+      'color: black',
+      'text-align: center',
+      'background-color: white',
+      'border: 3px solid red'
+    ];
+    var node = document.createElement('div');
+    node.style.cssText = styles.join('; ');
+    node.textContent = message;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
+  // Обработчик отправки формы
+  var formSubmitHandler = function (evt) {
+    var submitButton = userSetupForm.querySelector('.setup-submit');
+    var onSuccess = function () {
+      window.dialog.close();
+      submitButton.textContent = 'Сохранить';
+      submitButton.disabled = false;
+    };
+    submitButton.textContent = 'Данные отправляются...';
+    submitButton.disabled = true;
+    evt.preventDefault();
+    window.backend.save(new FormData(userSetupForm), onSuccess, showErrorMessage);
+  };
+
   // Вешаем обработчики на элементы
   wizardCoat.addEventListener('click', wizardCoatClickHandler);
   wizardEyes.addEventListener('click', wizardEyesClickHandler);
   wizardFireball.addEventListener('click', wizardFireballClickHandler);
+  userSetupForm.addEventListener('submit', formSubmitHandler);
+
+  // Получаем волшебников с сервера
+  window.backend.load(window.wizards.get, showErrorMessage);
 })();

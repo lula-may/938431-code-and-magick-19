@@ -11,7 +11,6 @@
   // Открытие диалогового окна
   var openPopup = function () {
     userSetupElement.classList.remove('hidden');
-    window.wizards.get();
     document.addEventListener('keydown', escPressHandler);
     userSetupOpenButton.removeEventListener('click', userSetupOpenButtonClickHandler);
     userSetupOpenButton.removeEventListener('keydown', userSetupOpenButtonPressEnterHandler);
@@ -22,7 +21,6 @@
     userSetupElement.classList.add('hidden');
     userSetupElement.style.top = '';
     userSetupElement.style.left = '';
-    window.wizards.remove();
     document.removeEventListener('keydown', escPressHandler);
     userSetupOpenButton.addEventListener('click', userSetupOpenButtonClickHandler);
     userSetupOpenButton.addEventListener('keydown', userSetupOpenButtonPressEnterHandler);
@@ -99,4 +97,8 @@
   });
 
   userSetupKnob.addEventListener('mousedown', userSetupKnobDragHandler);
+
+  window.dialog = {
+    close: closePopup
+  };
 })();
