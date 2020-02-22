@@ -37,41 +37,42 @@
   var wizardFireballInput = userSetupPlayer.querySelector('input[name="fireball-color"]');
 
   // Изменение цвета на следующий из массива
-  var coatColorIndex = 0;
-  var eyesColorIndex = 0;
-  var fireballColorIndex = 0;
+  var coatColor = COAT_COLORS[0];
+  var eyesColor = EYES_COLORS[0];
+  var fireballColor = FIREBALL_COLORS[0];
 
-  var getNextIndex = function (index, elements) {
-    return (index + 1) % elements.length;
+  var getNextElement = function (el, elements) {
+    var nextIndex = (elements.indexOf(el) + 1) % elements.length;
+    return elements[nextIndex];
   };
 
-  var changeColor = function (element, elementInput, colorIndex, colors) {
-    var newColor = colors[colorIndex];
-    element.style.fill = newColor;
-    elementInput.value = newColor;
+  var changeColor = function (element, elementInput, color) {
+    element.style.fill = color;
+    elementInput.value = color;
   };
 
-  var changeBackgroundColor = function (element, elementInput, colorIndex, colors) {
-    var newColor = colors[colorIndex];
-    element.style.background = newColor;
-    elementInput.value = newColor;
+  var changeBackgroundColor = function (element, elementInput, color) {
+    element.style.background = color;
+    elementInput.value = color;
   };
 
   // Обработчики клика для изменения цвета
 
   var wizardCoatClickHandler = function () {
-    coatColorIndex = getNextIndex(coatColorIndex, COAT_COLORS);
-    changeColor(wizardCoat, wizardCoatInput, coatColorIndex, COAT_COLORS);
+    coatColor = getNextElement(coatColor, COAT_COLORS);
+    changeColor(wizardCoat, wizardCoatInput, coatColor);
+    window.setup.coatChangeHandler(coatColor);
   };
 
   var wizardEyesClickHandler = function () {
-    eyesColorIndex = getNextIndex(eyesColorIndex, EYES_COLORS);
-    changeColor(wizardEyes, wizardEyesInput, eyesColorIndex, EYES_COLORS);
+    eyesColor = getNextElement(eyesColor, EYES_COLORS);
+    changeColor(wizardEyes, wizardEyesInput, eyesColor);
+    window.setup.eyesChangeHandler(eyesColor);
   };
 
   var wizardFireballClickHandler = function () {
-    fireballColorIndex = getNextIndex(fireballColorIndex, FIREBALL_COLORS);
-    changeBackgroundColor(wizardFireball, wizardFireballInput, fireballColorIndex, FIREBALL_COLORS);
+    fireballColor = getNextElement(fireballColor, FIREBALL_COLORS);
+    changeBackgroundColor(wizardFireball, wizardFireballInput, fireballColor);
   };
 
   // Создание сообщения об ошибке
@@ -116,5 +117,10 @@
   userSetupForm.addEventListener('submit', formSubmitHandler);
 
   // Получаем волшебников с сервера
-  window.backend.load(window.wizards.get, showErrorMessage);
+
+  window.setup = {
+    showError: showErrorMessage,
+    coatChangeHandler: function () {},
+    eyesChangeHandler: function () {}
+  };
 })();
