@@ -32,8 +32,11 @@
   };
 
   var getWizardsFragment = function (data) {
+    var workList = data;
+    // При первом обращении к функции, адаптируем и сохраняем данные в wizardList
     if (!wizardList.length) {
       adapt(data);
+      workList = wizardList;
     }
     var similarWizardTemplate = document.querySelector('#similar-wizard-template')
     .content
@@ -49,7 +52,7 @@
 
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < WIZARD_AMOUNT; i++) {
-      fragment.appendChild(renderWizard(wizardList[i]));
+      fragment.appendChild(renderWizard(workList[i]));
     }
 
     similarList.appendChild(fragment);
@@ -62,13 +65,15 @@
 
   var updateWizards = function () {
     removeWizardsList();
-    wizardList.forEach(function (el) {
+    var workList = wizardList.slice();
+    workList.forEach(function (el) {
       el.rank = getWizardRank(el);
     });
-    wizardList.sort(function (first, second) {
-      return second.rank - first.rank;
+    workList.sort(function (first, second) {
+      return (second.rank - first.rank === 0) ? wizardList.indexOf(first) - wizardList.indexOf(second)
+        : second.rank - first.rank;
     });
-    getWizardsFragment(wizardList);
+    getWizardsFragment(workList);
   };
 
   window.setup.coatChangeHandler = window.debounce(function (color) {
