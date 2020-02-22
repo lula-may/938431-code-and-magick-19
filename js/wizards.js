@@ -5,8 +5,8 @@
   var similarElement = document.querySelector('.setup-similar');
   var similarList = similarElement.querySelector('.setup-similar-list');
   var wizardList = [];
-  var coatColor;
-  var eyesColor;
+  var coatColor = document.querySelector('input[name="coat-color"]').value;
+  var eyesColor = document.querySelector('input[name="eyes-color"]').value;
 
   var adapt = function (serverData) {
     wizardList = serverData.map(function (el) {
@@ -62,20 +62,24 @@
 
   var updateWizards = function () {
     removeWizardsList();
-    getWizardsFragment(wizardList.sort(function (first, second) {
-      return getWizardRank(second) - getWizardRank(first);
-    }));
+    wizardList.forEach(function (el) {
+      el.rank = getWizardRank(el);
+    });
+    wizardList.sort(function (first, second) {
+      return second.rank - first.rank;
+    });
+    getWizardsFragment(wizardList);
   };
 
-  window.setup.coatChangeHandler = function (color) {
+  window.setup.coatChangeHandler = window.debounce(function (color) {
     coatColor = color;
     updateWizards();
-  };
+  });
 
-  window.setup.eyesChangeHandler = function (color) {
+  window.setup.eyesChangeHandler = window.debounce(function (color) {
     eyesColor = color;
     updateWizards();
-  };
+  });
 
   window.backend.load(getWizardsFragment, window.setup.showError);
 
