@@ -70,18 +70,17 @@
       el.rank = getWizardRank(el);
     });
     workList.sort(function (first, second) {
-      return (second.rank - first.rank === 0) ? wizardList.indexOf(first) - wizardList.indexOf(second)
-        : second.rank - first.rank;
+      return second.rank - first.rank;
     });
     getWizardsFragment(workList);
   };
 
-  window.setup.coatChangeHandler = window.debounce(function (color) {
+  window.setup.coatChangeHandler = window.debounce.set(function (color) {
     coatColor = color;
     updateWizards();
   });
 
-  window.setup.eyesChangeHandler = window.debounce(function (color) {
+  window.setup.eyesChangeHandler = window.debounce.set(function (color) {
     eyesColor = color;
     updateWizards();
   });
