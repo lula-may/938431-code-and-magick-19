@@ -75,12 +75,12 @@
     getWizardsFragment(workList);
   };
 
-  window.setup.coatChangeHandler = window.debounce.set(function (color) {
+  window.setup.coatChangeHandler = window.debounce(function (color) {
     coatColor = color;
     updateWizards();
   });
 
-  window.setup.eyesChangeHandler = window.debounce.set(function (color) {
+  window.setup.eyesChangeHandler = window.debounce(function (color) {
     eyesColor = color;
     updateWizards();
   });

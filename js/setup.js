@@ -4,11 +4,6 @@
   var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
   var FIREBALL_COLORS = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
   var ESC_KEY = 'Escape';
-  var COLOR = {
-    COATS: COAT_COLORS,
-    EYES: EYES_COLORS,
-    FIREBALLS: FIREBALL_COLORS
-  };
 
   var userSetupElement = document.querySelector('.setup');
   var userSetupForm = userSetupElement.querySelector('.setup-wizard-form');
@@ -42,9 +37,9 @@
   var wizardFireballInput = userSetupPlayer.querySelector('input[name="fireball-color"]');
 
   // Изменение цвета на следующий из массива
-  var coatColor = COLOR.COATS[0];
-  var eyesColor = COLOR.EYES[0];
-  var fireballColor = COLOR.FIREBALLS[0];
+  var coatColor = wizardCoat.style.fill;
+  var eyesColor = wizardEyes.style.fill;
+  var fireballColor = wizardFireball.style.background;
 
   var getNextElement = function (el, elements) {
     var nextIndex = (elements.indexOf(el) + 1) % elements.length;
