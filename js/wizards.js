@@ -5,9 +5,10 @@
   var similarElement = document.querySelector('.setup-similar');
   var similarList = similarElement.querySelector('.setup-similar-list');
   var wizardList = [];
+  var coatColor = document.querySelector('input[name="coat-color"]').value;
+  var eyesColor = document.querySelector('input[name="eyes-color"]').value;
 
-  var getWizardsFragment = function (serverData) {
-    // Адаптируем данные с сервера
+  var adapt = function (serverData) {
     wizardList = serverData.map(function (el) {
       return {
         name: el.name,
@@ -17,15 +18,29 @@
         artifacts: el.artifacts
       };
     });
+  };
 
+  var getWizardRank = function (wizard) {
+    var rank = 0;
+    if (wizard.coatColor === coatColor) {
+      rank += 2;
+    }
+    if (wizard.eyesColor === eyesColor) {
+      rank += 1;
+    }
+    return rank;
+  };
+
+  var getWizardsFragment = function (data) {
+    var workList = data;
+    // При первом обращении к функции, адаптируем и сохраняем данные в wizardList
+    if (!wizardList.length) {
+      adapt(data);
+      workList = wizardList;
+    }
     var similarWizardTemplate = document.querySelector('#similar-wizard-template')
     .content
     .querySelector('.setup-similar-item');
-
-    var getRandomElement = function (arr) {
-      var randomIndex = Math.floor(Math.random() * arr.length);
-      return arr[randomIndex];
-    };
 
     var renderWizard = function (wizard) {
       var wizardElement = similarWizardTemplate.cloneNode(true);
@@ -37,8 +52,7 @@
 
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < WIZARD_AMOUNT; i++) {
-      var nextRandomWizard = getRandomElement(wizardList);
-      fragment.appendChild(renderWizard(nextRandomWizard));
+      fragment.appendChild(renderWizard(workList[i]));
     }
 
     similarList.appendChild(fragment);
@@ -48,6 +62,30 @@
   var removeWizardsList = function () {
     similarList.innerHTML = '';
   };
+
+  var updateWizards = function () {
+    removeWizardsList();
+    var workList = wizardList.slice();
+    workList.forEach(function (el) {
+      el.rank = getWizardRank(el);
+    });
+    workList.sort(function (first, second) {
+      return second.rank - first.rank;
+    });
+    getWizardsFragment(workList);
+  };
+
+  window.setup.coatChangeHandler = window.debounce(function (color) {
+    coatColor = color;
+    updateWizards();
+  });
+
+  window.setup.eyesChangeHandler = window.debounce(function (color) {
+    eyesColor = color;
+    updateWizards();
+  });
+
+  window.backend.load(getWizardsFragment, window.setup.showError);
 
   window.wizards = {
     get: getWizardsFragment,
